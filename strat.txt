@@ -1,0 +1,118 @@
+from AlgorithmImports import *
+import numpy as np
+
+class SoftmaxEnsembleStrategy(QCAlgorithm):
+
+    def Initialize(self):
+        # 1. Backtest Window Configuration
+        self.set_start_date(2021, 1, 1)
+        self.set_end_date(2026, 1, 1)
+        self.set_cash(2000000) 
+
+        # 2. Strategy Parameters
+        self.e = 0.01
+        self.Ts = 80
+        self.sigmao = 0.1  
+        self.T = 30
+        self.max_Tl = 131
+        self.tl_range = np.arange(115, 131) 
+
+        # 3. Asset Registration 
+        self.asset_symbol = self.add_equity("SPY", Resolution.MINUTE).Symbol
+
+        # 4. State Trackers for Streaming Memory Optimization
+        self.price_window = RollingWindow[float](self.max_Tl + 2)
+        # GAP PROTECTION: Parallel rolling container tracking bar timestamps
+        self.time_window = RollingWindow(self.max_Tl + 2)
+        
+        # Incremental tracking variables for Expanding Standard Deviation
+        self.n_difs = 0
+        self.sum_difs = 0.0
+        self.sum_sq_difs = 0.0
+        
+        # Iteration step counter to handle periodic trade execution masking
+        self.step_counter = 0
+
+    def OnData(self, slice: Slice):
+        # Ensure the current data slice contains bars for our asset
+        if self.asset_symbol not in slice.bars:
+            return
+
+        # 1. Trigger strategy execution using strictly historical data (Mirrors .shift(1))
+        # This ensures a trade at 12:10 evaluates the state of the market up to 12:09
+        if self.price_window.count >= (self.max_Tl + 1):
+            if self.step_counter % self.T == 0:
+                self.ExecuteStrategyLogic()
+            self.step_counter += 1
+
+        # 2. Extract close prices and timestamps, pushing them to their containers
+        current_close = slice.bars[self.asset_symbol].close
+        self.price_window.add(current_close)  
+        self.time_window.add(slice.time)
+
+        # 3. Handle streaming variance accumulators
+        if self.price_window.count >= 2:
+            # GAP PROTECTION: Only accumulate data points if they belong to the same calendar day.
+            # This prevents overnight/weekend gaps from distorting global volatility (sigma)
+            if self.time_window[0].date() == self.time_window[1].date():
+                dif = self.price_window[0] - self.price_window[1]
+                self.n_difs += 1
+                self.sum_difs += dif
+                self.sum_sq_difs += dif ** 2
+
+    def ExecuteStrategyLogic(self):
+        # Safety fallback check to prevent a ZeroDivisionError during cold initialization
+        if self.n_difs == 0:
+            return
+
+        # 1. Compute current global expanding volatility (sigma)
+        mean_dif = self.sum_difs / self.n_difs
+        variance = (self.sum_sq_difs / self.n_difs) - (mean_dif ** 2)
+        sigma = np.sqrt(max(1e-9, variance))
+        rho = (sigma / self.sigmao) ** 2
+
+        # 2. Extract historical price differences and time arrays from windows
+        prices = np.array([self.price_window[i] for i in range(self.price_window.count)])[::-1]  
+        times = np.array([self.time_window[i] for i in range(self.time_window.count)])[::-1]
+
+        # Process chronological price differentials
+        raw_difs = np.diff(prices) 
+
+        # GAP PROTECTION: Intercept lookback windows.
+        # Wherever consecutive bars span across separate days, zero out the transition element.
+        for i in range(len(raw_difs)):
+            if times[i+1].date() != times[i].date():
+                raw_difs[i] = 0.0
+
+        # 3. Calculate lookback window means using sanitized intraday-only data
+        small_mean = np.mean(raw_difs[-self.Ts:])
+        long_means = np.array([np.mean(raw_difs[-Tl:]) for Tl in self.tl_range])
+
+        # 4. Core Mathematical Indicator Equations
+        a = small_mean / (1 + rho / self.Ts)
+        b_vec = long_means / (1 + rho / self.tl_range)
+        
+        denominator = ((a - b_vec) ** 2) + 1e-9
+        T_vec = (-1 * np.log(self.e) * 2 * (sigma ** 2)) / denominator
+        
+        # Branching execution path vectorization
+        ind_true = self.T * a
+        ind_false = T_vec * a + (self.T - T_vec) * (self.e * a + (1 - self.e) * b_vec)
+        ind_vector = np.where(T_vec > self.T, ind_true, ind_false)
+
+        # Generate directional execution target signals
+        calculated_move_vec = np.where(abs(ind_vector)<1e-3,0,np.where(ind_vector>0,1,0))
+
+        # 5. Softmax Allocation Calculation
+        max_ind = np.max(ind_vector)
+        exp_ind = np.exp(ind_vector - max_ind)
+        softmax_weights = exp_ind / np.sum(exp_ind)
+
+        # Determine final blended target position sizing
+        blended_move = np.sum(softmax_weights * calculated_move_vec)
+
+        # 6. Execution / Order Management Engine
+        self.set_holdings(self.asset_symbol, blended_move)
+        
+        # Debug logging to audit transaction steps inside QuantConnect console
+        self.log(f"Step {self.step_counter} | Sigma: {sigma:.4f} | Target Allocation: {blended_move:.2%}")
