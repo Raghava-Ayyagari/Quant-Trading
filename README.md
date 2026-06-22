@@ -10,12 +10,12 @@ This project began as an entry-level exploration into quant, focusing on a singl
 
 However, forward out-of-sample validation exposed a classic quantitative obstacle: a remarkably weak correlation between the optimal parameters found on historical data and their actual performance on future live data. 
 
-To prevent overfitting and tame execution volatility, the strategy overhauled into a robust ensemble framework. By securing a structurally stable short lookback window ($T_s$) and evaluating a diverse spectrum of concurrent long lookback windows ($T_l$) across an array of shifting look-forward time horizons ($t$), the system gained structural stability through model diversification.
+To prevent overfitting and tame execution volatility, the strategy overhauled into a robust ensemble framework. By securing a structurally stable short lookback window ($T_s$) and evaluating a diverse spectrum of concurrent long lookback windows ($T_l$)(weighed by softmax of indicators) across an array of shifting look-forward time horizons ($t$) (weighed by decaying exponential), the system gained structural stability through model diversification.
 
 ### Current Performance Profile & Horizons
 Multi-stock backtesting reveals highly regime-dependent performance profiles:
 * **Asset Specificity:** The model delivers excellent, sustained risk-adjusted returns on specific equity structures, but encounters structural friction and fails on others where underlying structural drift assumptions break down.
-* **Shorting Mechanics (-1):** While the current baseline operates on a long-only fractional scale [0.0, 1.0], experimental adjustments enabling two-sided short positions (-1) completely alter the strategy's equity curve topology. Allowing short entries sometimes dilutes alpha on historically optimal trending stocks, but significantly stabilizes and rehabilitates performance on previously failing, mean-reverting tickers.
+* **Shorting Mechanics (-1):** While the current baseline operates on a long-only fractional scale [0.0, 1.0], experimental adjustments enabling two-sided short positions (-1) completely alter the strategy's equity curve topology. Allowing short entries sometimes dilutes alpha on historically optimal trending stocks, but significantly stabilizes and rehabilitates performance on failing assets.
 
 Ultimately, this project serves as a deeply insightful mathematical experiment. While the predictive mechanics still possess significant scope for parameter refinement and structural optimization, building this system from the ground up provided invaluable practical exposure to data leakage prevention, statistical resonance, and vectorization design.
 
@@ -33,6 +33,20 @@ A deeper exploration of the parameter landscape revealed an architectural phenom
 
 By holding the short lookback window ($T_s$) static and systematically permuting the long lookback window ($T_l$) across wide integer ranges, the resulting annualized Sharpe Ratios were tracked, mapped, and grouped. All $T_l$ configuration paths sharing a matching remainder when divided by the stride interval ($T_l \pmod{30}$) create tightly clustered, stratified risk-adjusted return bands. Empirically, **higher modulo remainders yield significantly elevated Sharpe ratio profiles**, indicating optimized phase alignment with the structural market rebalancing cycles.
 
+Attached are some graphs visualising this.The Y axis has annualised sharpe ratio and X axis has values of Tl ,each point in scatter plot has been colour coded ,with values having same remainder when divided by 30 having same colout,the colour bar shown beside,and the correlation is clearly visible,illustrating the cyclostationary behaviour in the initial strategy.
+
+#### Strategy 1
+![img](Sharpe_vs_Tl_mod30/Sharpe_vs_Tl_mod30_1.png)
+![img](Sharpe_vs_Tl_mod30/Sharpe_vs_Tl_mod30_2.png)
+![img](Sharpe_vs_Tl_mod30/Sharpe_vs_Tl_mod30_3.png)
+
+In order to reduce the parameter rigidity and make it more robust,we take several Tl values and weight calculated signal with softmax weights of underlying indicators.ALong with that we take several periods of prediction t and weight them with decaying exponential weight.With small number of parameters (only some ranges value scan take ) the graphs look like this.
+
+#### Strategy 2
+![img](Sharpe_vs_Tl_new/Sharpe_vs_Tl_new1.png)    ![img](Sharpe_vs_Tl_new/Sharpe_vs_Tl_new2.png)
+
+It is clear that the sharpe value takes a more stable value(lesser than maximum possible in strategy 1) acheivable for wide range of parameters and the lines in upper graphs seem to converge together to their weighted sums.
+
 ### 2. Signal Activation Topology (Sigmoid vs. Signum)
 The structural formation of these parameter bands depends heavily on the mathematical activation functions used to scale raw directional conviction:
 
@@ -45,6 +59,8 @@ Tracking the temporal properties of the strategy reveals that the intervals betw
 When the transformation is mapped into natural log space $\ln(\Delta \tau)$, the probability density function (PDF) resolves into a **Jonhson Distribution** whose parameters can be observed:
 
 $$f(x) = \frac{\delta}{\lambda \sqrt{2\pi}} \frac{1}{\sqrt{1 + \left(\frac{x-\xi}{\lambda}\right)^2}} \exp\left[ -\frac{1}{2} \left( \gamma + \delta \sinh^{-1}\left(\frac{x-\xi}{\lambda} \right) \right)^2 \right]$$
+
+![img](PDF_log_Turning_Time.png)
 
 > **Structural Insight:** The clean  profile in log space proves that market regime durations are fundamentally asymmetric. The sharp, bounded left tail establishes a clear physical limit on minimum regime velocity (preventing rapid, high-frequency signal whip-sawing). Conversely, the elongated, heavy right tail mathematically accounts for rare, highly stable macroeconomic trends that persist exponentially longer than traditional symmetric gaussian models assume.
 
