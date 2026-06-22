@@ -1,0 +1,21 @@
+# Ignore Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local virtual environments
+venv/
+.env/
+
+# Ignore Jupyter Notebook checkpoint files
+.ipynb_checkpoints/
+# macOS system junk
+.DS_Store
+
+# Windows system junk
+Thumbs.db
+
+# IDE specific files (VS Code, CLion, etc.)
+.vscode/
+.idea/
