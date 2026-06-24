@@ -357,7 +357,9 @@ K_1w(y_2,y_1,t)
 \frac{\partial w}{\partial y_2}-
 \frac{\partial^2w}{\partial y_2^2}
 \frac{\partial w}{\partial y_1}
-\right).
+\right)
+\
+&+(K_1+K_2)\frac{\partial w}{\partial t}(\frac{\partial w}{\partial y_1}-\frac{\partial w}{\partial y_2})
 \end{aligned}
 $$
 
