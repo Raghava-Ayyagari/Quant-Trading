@@ -311,7 +311,7 @@ Construct the portfolio
 
 $$
 \Pi=
-K^T Y-K^T (\Delta W)^{-1} W(Y)
+K^T Y-K^T (\nabla W)^{-1} W(Y)
 $$
 
 Following a Black–Scholes style hedging argument and imposing return neutrality leads to the nonlinear PDE
