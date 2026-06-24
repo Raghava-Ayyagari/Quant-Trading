@@ -2,123 +2,131 @@
 
 ## Motivation
 
-After reading the original Black–Scholes paper, I wanted to gain a deeper understanding of the mechanics of option pricing by attempting a similar derivation in a multi-asset setting. Rather than modeling a single stock, I consider two underlying assets and derive a pricing equation under assumptions analogous to those used in the classical Black–Scholes framework.
+After reading the original Black–Scholes paper, I wanted to gain a deeper understanding of option pricing by attempting a similar derivation in a multi-asset setting. Rather than considering a single stock, I model two underlying assets and investigate what happens when assumptions analogous to those used in Black–Scholes are imposed on a weighted portfolio of assets.
 
-This work should be viewed as an exploratory mathematical exercise intended to improve understanding of stochastic calculus and option pricing theory rather than a complete or validated financial model.
+This work should be viewed as an exploratory mathematical exercise intended to improve understanding of stochastic calculus and option pricing rather than as a complete financial model.
 
 ---
 
-## Derivation Roadmap
+# Derivation Roadmap
 
 ```mermaid
 flowchart TD
 
-A[Two Stocks S1,S2<br>Prices Y1,Y2]
---> B[Define Weighted Portfolio<br>P = K1Y1 + K2Y2]
+A[Two Stocks S1 and S2]
+--> B[Portfolio P = K1*Y1 + K2*Y2]
 
-B --> C[Assume Mean Return<br>E[dP/P] = μ dt]
+B --> C[Mean Return Assumption]
+B --> D[Variance Assumption]
 
-B --> D[Assume Variance<br>Var(dP/P)=σ²dt]
+C --> E[Drift Terms]
 
-C --> E[Derive Drift Terms<br>E[dY₁]=μY₁dt<br>E[dY₂]=μY₂dt]
+D --> F[Covariance Structure]
 
-D --> F[Derive Covariance Structure<br>Var(dY)=YYᵀσ²dt]
+E --> G[Asset SDEs]
+F --> G
 
-F --> G[Obtain<br>Var(dY₁), Var(dY₂), Cov(dY₁,dY₂)]
+G --> H[Multivariate Ito Lemma]
 
-E --> H[Construct Asset SDEs]
+H --> I[Option Dynamics]
 
-G --> H
+I --> J[Symmetry Assumption]
 
-H --> I[Apply Multivariate Itô Lemma]
+J --> K[Hedging Argument]
 
-I --> J[Option Dynamics<br>w(Y₁,Y₂,t)]
-
-J --> K[Symmetry Assumption<br>w(Y₁,Y₂,t)<br>w(Y₂,Y₁,t)]
-
-K --> L[Construct Hedged Portfolio]
-
-L --> M[Eliminate Stochastic Terms]
-
-M --> N[Nonlinear Two-Asset PDE]
+K --> L[Nonlinear Pricing PDE]
 ```
 
 ---
 
 # Model Setup
 
-Let
+Let $Y_1(t)$ and $Y_2(t)$ denote the prices of two stocks $S_1$ and $S_2$.
+
+Define the weighted portfolio
 
 $$
-Y_1(t), \qquad Y_2(t)
-$$
-
-denote the prices of two stocks
-
-$$
-S_1,\qquad S_2.
-$$
-
-Consider a weighted portfolio
-
-$$
-P = K_1Y_1 + K_2Y_2,
+P = K_1Y_1 + K_2Y_2
 $$
 
 where $K_1$ and $K_2$ are constants.
 
-The goal is to derive a pricing equation for options written on these assets by imposing assumptions on the portfolio return analogous to those used in the Black–Scholes framework.
-
+The objective is to derive a pricing equation for options written on these assets using assumptions analogous to those employed in the Black–Scholes framework.
 ---
+# Mean Return Assumption
 
-# Assumptions
+Assume
 
-## Mean Return Assumption
-
-Assume the expected percentage return of the weighted portfolio satisfies
-
-$$E\!\left[\frac{dP}{P}\right]=
-\mu\,dt.
+$$
+E\left(
+\frac{dP}{P}
+\right)=
+\mu\.dt
 $$
 
-Writing this in vector form,
-
-$$E\!\left[\frac{K^{T}dY}{K^{T}Y}\right]=
-\mu\,dt,
-$$
-
-where
+Using vector notation,
 
 $$
 K=
-\begin{bmatrix}
+\left[
+\begin{array}{c}
 K_1\\
 K_2
-\end{bmatrix},
+\end{array}
+\right],
 \qquad
 Y=
-\begin{bmatrix}
+\left[
+\begin{array}{c}
 Y_1\\
 Y_2
-\end{bmatrix}.
+\end{array}
+\right],
+$$
+
+so that
+
+$$
+P = K^TY.
+$$
+
+The assumption becomes
+
+$$
+E\left(
+\frac{K^TdY}{K^TY}
+\right)=
+\mu\.dt
 $$
 
 Hence
-$$K^{T}E(dY)=
-K^{T}Y\,\mu\,dt.
-$$
-
-Since this must hold for arbitrary $K$,
 
 $$
-E(dY_1)=\mu Y_1dt,
+K^TE(dY)=
+K^TY\\mu\.dt
 $$
 
+Since this must hold for arbitrary choices of
+
 $$
-E(dY_2)=\mu Y_2dt.
+K,
 $$
 
-Therefore the drift terms satisfy
+we obtain
+
+$$
+E(dY_1)=
+\mu Y_1dt,
+$$
+
+and
+
+$$
+E(dY_2)=
+\mu Y_2dt.
+$$
+
+Therefore the drift coefficients are
 
 $$
 a_1=\mu Y_1,
@@ -130,119 +138,110 @@ $$
 
 ---
 
-## Variance Assumption
+# Variance Assumption
 
 Assume
 
-$$\operatorname{Var}\left(\frac{K^{T}dY}{K^{T}Y}\right)=
-\sigma^2 dt.
+$$
+Var\\left(\frac{K^TdY}{K^TY}\right)=\sigma^2dt.
 $$
 
 Using
-$$\operatorname{Var}(AX)=
-A\,\operatorname{Var}(X)\,A^T,
+
+$$
+Var(AX)=A\.Var(X)\.A^T
 $$
 
 gives
 
-$$\frac{K^T\operatorname{Var}(dY)K}{(K^TY)^2}=
+$$
+\frac{K^TVar(dY)K}{(K^TY)^2}=
 \sigma^2dt.
 $$
 
 Thus
 
-$$K^T\operatorname{Var}(dY)K=
-K^TY\,Y^TK\,\sigma^2dt.
+$$
+K^TVar(dY)K=
+K^TYY^TK\\sigma^2dt.
 $$
 
-Since this relation must hold for arbitrary $K$,
-
-$$\boxed{
-\operatorname{Var}(dY)=
-YY^T\sigma^2dt
-}
-$$
-
-or
+Since this must hold for arbitrary $K$,
 
 $$
-\operatorname{Var}(dY)=
+Var(dY)=YY^T\sigma^2dt.
+$$
+
+Equivalently,
+
+$$
+Var(dY)=
 \sigma^2dt
-\begin{bmatrix}
+\begin{pmatrix}
 Y_1^2 & Y_1Y_2\\
 Y_1Y_2 & Y_2^2
-\end{bmatrix}.
+\end{pmatrix}.
 $$
 
 Therefore
 
 $$
-\boxed{
-\operatorname{Var}(dY_1)=
-\sigma^2Y_1^2dt
-}
+Var(dY_1)=\sigma^2Y_1^2dt,
 $$
 
 $$
-\boxed{
-\operatorname{Var}(dY_2)=
-\sigma^2Y_2^2dt
-}
+Var(dY_2)=\sigma^2Y_2^2dt,
 $$
 
 and
 
-$$
-\boxed{
-\operatorname{Cov}(dY_1,dY_2)=
-\sigma^2Y_1Y_2dt
-}.
-$$
+$$ Cov(dY_1,dY_2)=\sigma^2Y_1Y_2dt $$
+
+---
+
+> **Observation**
+>
+> Although the underlying Brownian motions are assumed to be independent, the variance assumption imposed on the weighted portfolio implies
+>
+> $$
+> Cov(dY_1,dY_2)
+> => \sigma^2Y_1Y_2dt.
+> $$
+>
+> Consequently, the asset price processes acquire a non-trivial covariance structure. This is one of the most interesting consequences of the modeling assumptions.
 
 ---
 
 # Asset Dynamics
 
-Assume the stochastic differential equations
+Assume
 
 $$
-dY_1=
-a_1(Y_1)\,dt
-+
-b_1(Y_1)\,dB_1
-+
-b_2(Y_1)\,dB_2
+dY_1=a_1(Y_1,Y_2,t)dt+b_1(Y_1,Y_2,t)dB_1+c_1(Y_1,Y_2,t)dB_2
 $$
 
 and
 
 $$
-dY_2=
-a_2(Y_2)\,dt
-+
-c_1(Y_2)\,dB_1
-+
-c_2(Y_2)\,dB_2.
+dY_2=a_2(Y_1,Y_2,t)dt+b_2(Y_1,Y_2,t)dB_1+c_2(Y_1,Y_2,t)dB_2.
 $$
 
-Using the covariance structure obtained above,
+
+ and we assume c_1=b_2
+Using the covariance structure derived above,
 
 $$
-Y_1^2\sigma^2=
-b_1^2+b_2^2
-\tag{1}
+Y_1^2\sigma^2=b_1^2+b_2^2,
 $$
 
 $$
-Y_2^2\sigma^2=
-c_1^2+c_2^2
-\tag{2}
+Y_2^2\sigma^2=c_1^2+c_2^2,
 $$
 
+and
+
 $$
-Y_1Y_2\sigma^2=
-b_1c_1+b_2c_2.
-\tag{3}
+Y_1Y_2\sigma^2=b_1c_1+b_2c_2.
 $$
 
 Together with
@@ -254,18 +253,9 @@ a_2=\mu Y_2,
 $$
 
 these equations characterize the admissible diffusion coefficients.
-
----
-
 # Option Price Dynamics
 
-Let
-
-$$
-w(Y_1,Y_2,t)
-$$
-
-denote the option price associated with stock $S_1$.
+Let $w(Y_1,Y_2,t)$ denote the option price associated with the first stock.
 
 Applying multivariate Itô's lemma,
 
@@ -276,163 +266,117 @@ dw=
 \frac{\partial w}{\partial y_1}dY_1
 +
 \frac{\partial w}{\partial y_2}dY_2
-$$
-
-$$
 +
-\frac12
-\sigma^2Y_1^2
-\frac{\partial^2 w}{\partial y_1^2}
-dt
+\frac12\sigma^2Y_1^2\frac{\partial^2w}{\partial y_1^2}dt
 +
-\frac12
-\sigma^2Y_2^2
-\frac{\partial^2 w}{\partial y_2^2}
-dt
-$$
-
-$$
+\frac12\sigma^2Y_2^2\frac{\partial^2w}{\partial y_2^2}dt
 +
-\sigma^2Y_1Y_2
-\frac{\partial^2 w}
-{\partial y_1\partial y_2}
-dt.
-$$
-
-Equivalently,
-
-$$
-\Delta w=
-\frac{\partial w}{\partial t}\Delta t
-+
-\frac{\partial w}{\partial y_1}\Delta y_1
-+
-\frac{\partial w}{\partial y_2}\Delta y_2
-$$
-
-$$
-+
-\frac12
-\frac{\partial^2 w}{\partial y_1^2}
-\sigma^2Y_1^2\Delta t
-+
-\frac12
-\frac{\partial^2 w}{\partial y_2^2}
-\sigma^2Y_2^2\Delta t
-$$
-
-$$
-+
-\frac{\partial^2 w}
-{\partial y_1\partial y_2}
-\sigma^2Y_1Y_2\Delta t.
+\sigma^2Y_1Y_2\frac{\partial^2w}{\partial y_1\partial y_2}dt.
 $$
 
 ---
-
 # Symmetry Assumption
 
-Assume a symmetric pricing function
+Assume the option pricing function is symmetric:
 
 $$
-w(Y_1,Y_2,t)=
-\text{Option price of }S_1
+w(Y_1,Y_2,t)
 $$
 
-and
+represents the option price of stock
 
 $$
-w(Y_2,Y_1,t)=
-\text{Option price of }S_2.
+S_1,
 $$
 
-This assumption allows both option prices to be represented by the same function with interchanged arguments.
+while
+
+$$
+w(Y_2,Y_1,t)
+$$
+
+represents the option price of stock
+
+$$
+S_2.
+$$
+
+Thus a single function generates both option prices through interchange of arguments.
 
 ---
 
 # Hedging Argument
 
-Construct a portfolio consisting of weighted option positions
+Construct the portfolio
 
 $$
 \Pi=
-K_1w(Y_1,Y_2,t)
-+
+K_1.Y_1+K_2.Y_2-
+K_1w(Y_1,Y_2,t)-
 K_2w(Y_2,Y_1,t).
 $$
 
-Following a Black–Scholes style hedging argument and imposing a return-neutrality condition leads to the nonlinear PDE
+Following a Black–Scholes style hedging argument and imposing return neutrality leads to the nonlinear PDE
 
 $$
+\begin{aligned}
+0={}&
 \gamma
 \left[
 \left(\frac{\partial w}{\partial y_1}\right)^2-
 \left(\frac{\partial w}{\partial y_2}\right)^2
 \right]
 (K_1y_1+K_2y_2)
-$$
-
-$$
--\gamma
+\
+&-\gamma
 \frac{\partial w}{\partial y_1}
-\Big[
-K_1w(y_1,y_2,t)
-+
+\left[
+K_1w(y_1,y_2,t)+
 K_2w(y_1,y_2,t)
-\Big]
-$$
-
-$$
-+\gamma
+\right]
+\&+\gamma
 \frac{\partial w}{\partial y_2}
-\Big[
-K_2w(y_1,y_2,t)
-+
+\left[
+K_2w(y_1,y_2,t)+
 K_1w(y_2,y_1,t)
-\Big]
-$$
-
-$$
-+\frac{\sigma^2}{2}\left(K_1y_1^2+K_2y_2^2\right)\left(\frac{\partial^2 w}{\partial y_1^2}\frac{\partial w}{\partial y_1}-
-\frac{\partial^2 w}{\partial y_2^2}
+\right]
+\&
++\frac{\sigma^2}{2}
+(K_1y_1^2+K_2y_2^2)
+\left(
+\frac{\partial^2w}{\partial y_1^2}
+\frac{\partial w}{\partial y_1}-
+\frac{\partial^2w}{\partial y_2^2}
 \frac{\partial w}{\partial y_2}
 \right)
-$$
-
-$$
--\frac{\sigma^2}{2}
+\
+&-\frac{\sigma^2}{2}
+(K_1y_2^2+K_2y_1^2)
 \left(
-K_1y_2^2+K_2y_1^2
-\right)
-\left(
-\frac{\partial^2 w}{\partial y_1^2}
+\frac{\partial^2w}{\partial y_1^2}
 \frac{\partial w}{\partial y_2}-
-\frac{\partial^2 w}{\partial y_2^2}
+\frac{\partial^2w}{\partial y_2^2}
 \frac{\partial w}{\partial y_1}
-\right)
-=0.
+\right).
+\end{aligned}
 $$
 
 ---
 
 # Mathematical Structure
 
-The derivation can be summarized schematically as
-
 $$
-\boxed{
 \text{Portfolio Assumptions}
 \Longrightarrow
-\text{Covariance Matrix}
+\text{Covariance Structure}
 \Longrightarrow
 \text{Asset SDEs}
 \Longrightarrow
-\text{It\^o Expansion}
+\text{Ito Expansion}
 \Longrightarrow
 \text{Hedging}
 \Longrightarrow
 \text{Pricing PDE}
-}
 $$
 
 ---
@@ -451,7 +395,7 @@ More importantly, the exercise highlighted how much of option pricing theory is 
 
 - Study rigorous derivations of Itô's lemma and stochastic integrals.
 - Extend the model to correlated Brownian motions.
-- Investigate arbitrage-freeness of the resulting framework.
+- Investigate arbitrage-freeness of the framework.
 - Analyze the nonlinear PDE and its mathematical properties.
 - Explore appropriate terminal and boundary conditions.
 - Develop finite-difference and Monte Carlo solution methods.
