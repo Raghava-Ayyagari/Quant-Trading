@@ -357,7 +357,7 @@ K_1w(y_2,y_1,t)
 \frac{\partial w}{\partial y_1}
 \right)
 \
-&+\frac{\partial w}{\partial t}(\frac{\partial w}{\partial y_1}-\frac{\partial w}{\partial y_2})+\frac{\partial w}{\partial t}(\sigma^2)Y_1 Y_2 \frac{partial^2w}{\partial y_1 \partial y_2}
+&+\frac{\partial w}{\partial t}(\frac{\partial w}{\partial y_1}-\frac{\partial w}{\partial y_2})+(\frac{\partial w}{\partial y_1}-\frac{\partial w}{\partial y_2}) \sigma^2 Y_1 Y_2 \frac{\partial^2w}{\partial y_1 \partial y_2}
 \end{aligned}
 $$
 
