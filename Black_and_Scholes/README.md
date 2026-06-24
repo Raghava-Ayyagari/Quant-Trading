@@ -332,7 +332,7 @@ $$
 \frac{\partial w}{\partial y_1}
 \left[
 K_1w(y_1,y_2,t)+
-K_2w(y_1,y_2,t)
+K_2w(y_2,y_1,t)
 \right]
 \&+\gamma
 \frac{\partial w}{\partial y_2}
