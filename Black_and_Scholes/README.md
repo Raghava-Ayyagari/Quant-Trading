@@ -110,25 +110,25 @@ The objective is to derive a pricing equation for options written on these asset
 Assume
 
 $$
-E\left(\frac{dP}{P}\right) = \mu\,dt
+E\left(\frac{dP}{P}\right) = \mu dt
 $$
 
 Using vector notation,
 
 $$
-K = \begin{bmatrix} K_1 \\ K_2 \end{bmatrix}, \qquad Y = \begin{bmatrix} Y_1 \\ Y_2 \end{bmatrix},
+K = \begin{bmatrix} K_1 \\ K_2 \end{bmatrix} \qquad Y = \begin{bmatrix} Y_1 \\ Y_2 \end{bmatrix},
 $$
 
 so that $P = K^T Y$. The assumption becomes
 
 $$
-E\left(\frac{K^T dY}{K^T Y}\right) = \mu\,dt
+E\left(\frac{K^T dY}{K^T Y}\right) = \mu dt
 $$
 
-Hence $K^T E(dY) = K^T Y\,\mu\,dt$. Since this must hold for arbitrary $K$,
+Hence $K^T E(dY) = K^T Y mu dt$. Since this must hold for arbitrary $K$,
 
 $$
-E(dY_1) = \mu Y_1\,dt, \qquad E(dY_2) = \mu Y_2\,dt.
+E(dY_1) = \mu Y_1 dt  \qquad E(dY_2) = \mu Y_2 dt.
 $$
 
 Therefore the drift coefficients are $a_1 = \mu Y_1$ and $a_2 = \mu Y_2$.
@@ -140,28 +140,28 @@ Therefore the drift coefficients are $a_1 = \mu Y_1$ and $a_2 = \mu Y_2$.
 Assume
 
 $$
-\operatorname{Var}\!\left(\frac{K^T dY}{K^T Y}\right) = \sigma^2\,dt.
+Var\left(\frac{K^T dY}{K^T Y}\right) = \sigma^2 dt.
 $$
 
-Using $\operatorname{Var}(AX) = A\operatorname{Var}(X)A^T$ gives
+Using Var(AX) = A\operatorname{Var}(X)A^T$ gives
 
 $$
-\frac{K^T\operatorname{Var}(dY)\,K}{(K^T Y)^2} = \sigma^2\,dt,
+\frac{K^TVar(dY) K}{(K^T Y)^2} = \sigma^2 dt,
 $$
 
-so $K^T\operatorname{Var}(dY)\,K = K^T YY^T K\,\sigma^2\,dt$. Since this holds for arbitrary $K$,
+so $K^TVar(dY) K = K^T YY^T K \sigma^2 dt$. Since this holds for arbitrary $K$,
 
 $$
-\operatorname{Var}(dY) = \sigma^2\,dt \begin{pmatrix} Y_1^2 & Y_1 Y_2 \\ Y_1 Y_2 & Y_2^2 \end{pmatrix}.
+Var(dY) = \sigma^2 dt \begin{pmatrix} Y_1^2 & Y_1 Y_2 \\ Y_1 Y_2 & Y_2^2 \end{pmatrix}.
 $$
 
 Therefore
 
 $$
-\operatorname{Var}(dY_1) = \sigma^2 Y_1^2\,dt, \quad \operatorname{Var}(dY_2) = \sigma^2 Y_2^2\,dt, \quad \operatorname{Cov}(dY_1,dY_2) = \sigma^2 Y_1 Y_2\,dt.
+Var(dY_1) = \sigma^2 Y_1^2 dt, \quad Var(dY_2) = \sigma^2 Y_2^2 dt, \quad Cov(dY_1,dY_2) = \sigma^2 Y_1 Y_2 dt.
 $$
 
-> **Observation.** Although the underlying Brownian motions are assumed independent, the variance assumption imposed on the weighted portfolio implies $\operatorname{Cov}(dY_1,dY_2) = \sigma^2 Y_1 Y_2\,dt$. Consequently the asset price processes acquire a non-trivial covariance structure. This is one of the most interesting consequences of the modelling assumptions. In particular, with a single shared $\sigma$, the implied correlation between the two assets is $\rho = 1$. Introducing an explicit correlation parameter $\rho \in (-1,1)$ generalises the cross-covariance to $\rho\sigma^2 Y_1 Y_2\,dt$ and breaks this degeneracy.
+> **Observation.** Although the underlying Brownian motions are assumed independent, the variance assumption imposed on the weighted portfolio implies $COv(dY_1,dY_2) = \sigma^2 Y_1 Y_2\,dt$. Consequently the asset price processes acquire a non-trivial covariance structure. This is one of the most interesting consequences of the modelling assumptions. In particular, with a single shared $\sigma$, the implied correlation between the two assets is $\rho = 1$. Introducing an explicit correlation parameter $\rho \in (-1,1)$ generalises the cross-covariance to $\rho\sigma^2 Y_1 Y_2\,dt$ and breaks this degeneracy.
 
 ---
 
@@ -170,7 +170,7 @@ $$
 Assume
 
 $$
-dY_1 = a_1\,dt + b_1\,dB_1 + c_1\,dB_2, \qquad dY_2 = a_2\,dt + b_2\,dB_1 + c_2\,dB_2,
+dY_1 = a_1dt + b_1dB_1 + c_1 dB_2, \qquad dY_2 = a_2 dt + b_2dB_1 + c_2dB_2,
 $$
 
 with the symmetry constraint $c_1 = b_2$. Matching the covariance structure gives
@@ -189,17 +189,11 @@ Let $w(Y_1,Y_2,t)$ denote the option price associated with the first stock.
 
 Applying multivariate Itô's lemma,
 
-$$
-dw =
-\frac{\partial w}{\partial t}\,dt
-+ \frac{\partial w}{\partial y_1}\,dY_1
-+ \frac{\partial w}{\partial y_2}\,dY_2
-+ \frac{1}{2}\sigma^2 Y_1^2\frac{\partial^2 w}{\partial y_1^2}\,dt
-+ \frac{1}{2}\sigma^2 Y_2^2\frac{\partial^2 w}{\partial y_2^2}\,dt
-+ \rho\sigma^2 Y_1 Y_2\frac{\partial^2 w}{\partial y_1\partial y_2}\,dt.
+$$dw =
+\frac{\partial w}{\partial t} dt + \frac{\partial w}{\partial y_1}dY_1 + \frac{\partial w}{\partial y_2}dY_2 + \frac{1}{2}\sigma^2 Y_1^2\frac{\partial^2 w}{\partial y_1^2}dt + \frac{1}{2}\sigma^2 Y_2^2\frac{\partial^2 w}{\partial y_2^2}dt + \rho\sigma^2 Y_1 Y_2\frac{\partial^2 w}{\partial y_1\partial y_2}dt.
 $$
 
-The cross-derivative term $\rho\sigma^2 Y_1 Y_2\,\partial^2 w/\partial y_1\partial y_2$ arises from the quadratic covariation $dY_1\,dY_2 = \rho\sigma^2 Y_1 Y_2\,dt$ and is essential; omitting it collapses the pricing function to a function of $y_1$ alone, eliminating all $y_2$ dependence.
+The cross-derivative term $\rho\sigma^2 Y_1 Y_2\partial^2 w/\partial y_1\partial y_2$ arises from the quadratic covariation $dY_1\,dY_2 = \rho\sigma^2 Y_1 Y_2\,dt$ and is essential; omitting it collapses the pricing function to a function of $y_1$ alone, eliminating all $y_2$ dependence.
 
 ---
 
@@ -224,13 +218,7 @@ Following a Black–Scholes style hedging argument and imposing return neutralit
 $$
 \begin{aligned}
 0 = {}&
-\gamma\!\left[\!\left(\frac{\partial w}{\partial y_1}\right)^{\!2} - \left(\frac{\partial w}{\partial y_2}\right)^{\!2}\right](K_1 y_1 + K_2 y_2)\\
-&- \gamma\frac{\partial w}{\partial y_1}\!\left[K_1 w(y_1,y_2,t) + K_2 w(y_2,y_1,t)\right]\\
-&+ \gamma\frac{\partial w}{\partial y_2}\!\left[K_2 w(y_1,y_2,t) + K_1 w(y_2,y_1,t)\right]\\
-&+ \frac{\sigma^2}{2}(K_1 y_1^2 + K_2 y_2^2)\!\left(\frac{\partial^2 w}{\partial y_1^2}\frac{\partial w}{\partial y_1} - \frac{\partial^2 w}{\partial y_2^2}\frac{\partial w}{\partial y_2}\right)\\
-&- \frac{\sigma^2}{2}(K_1 y_2^2 + K_2 y_1^2)\!\left(\frac{\partial^2 w}{\partial y_1^2}\frac{\partial w}{\partial y_2} - \frac{\partial^2 w}{\partial y_2^2}\frac{\partial w}{\partial y_1}\right)\\
-&+ \frac{\partial w}{\partial t}\!\left(\frac{\partial w}{\partial y_1} - \frac{\partial w}{\partial y_2}\right)
-+ \rho\sigma^2 Y_1 Y_2\frac{\partial^2 w}{\partial y_1\partial y_2}\!\left(\frac{\partial w}{\partial y_1} - \frac{\partial w}{\partial y_2}\right)
+\gamma\left[\left(\frac{\partial w}{\partial y_1}\right)^{2} - \left(\frac{\partial w}{\partial y_2}\right)^{2}\right](K_1 y_1 + K_2 y_2)\\&- \gamma\frac{\partial w}{\partial y_1}\left[K_1 w(y_1,y_2,t) + K_2 w(y_2,y_1,t)\right]\\&+ \gamma\frac{\partial w}{\partial y_2}\left[K_2 w(y_1,y_2,t) + K_1 w(y_2,y_1,t)\right]\\&+ \frac{\sigma^2}{2}(K_1 y_1^2 + K_2 y_2^2)\left(\frac{\partial^2 w}{\partial y_1^2}\frac{\partial w}{\partial y_1} - \frac{\partial^2 w}{\partial y_2^2}\frac{\partial w}{\partial y_2}\right)\\&- \frac{\sigma^2}{2}(K_1 y_2^2 + K_2 y_1^2)\left(\frac{\partial^2 w}{\partial y_1^2}\frac{\partial w}{\partial y_2} - \frac{\partial^2 w}{\partial y_2^2}\frac{\partial w}{\partial y_1}\right)\\&+ \frac{\partial w}{\partial t}\left(\frac{\partial w}{\partial y_1} - \frac{\partial w}{\partial y_2}\right)+ \rho\sigma^2 Y_1 Y_2\frac{\partial^2 w}{\partial y_1\partial y_2}\left(\frac{\partial w}{\partial y_1} - \frac{\partial w}{\partial y_2}\right)
 \end{aligned}
 $$
 
@@ -279,16 +267,6 @@ Linear(64 → 1)
 
 Output: w(t, y1, y2; σ, ρ)
 ```
-
-All inputs are normalised to $[-1, 1]$ before entering the network:
-
-| Input | Range used | Normalisation |
-|-------|-----------|---------------|
-| $t$ | $[0,\; T]$ | $(2t/T) - 1$ |
-| $y_1,\, y_2$ | $[0,\; 200]$ | $(y/100) - 1$ |
-| $\sigma$ | $[0.05,\; 0.50]$ | linear to $[-1,1]$ |
-| $\rho$ | $[-0.95,\; 0.95]$ | linear to $[-1,1]$ |
-
 ### 11.2 Loss Functions
 
 Training minimises the sum of two losses.
@@ -314,19 +292,19 @@ Without the cross-derivative term, the PDE can be satisfied by a function of $y_
 **Terminal condition loss.** A basket call option payoff is imposed at expiry $t = T$:
 
 $$
-w(T, y_1, y_2;\,\sigma, \rho) = \max(K_1 y_1 + K_2 y_2 - C,\; 0).
+w(T, y_1, y_2 ,\sigma, \rho) = \max(K_1 y_1 + K_2 y_2 - C,0).
 $$
 
 This terminal condition couples $y_1$ and $y_2$, ensuring the pricing function depends on both assets even before expiry.
 
 $$
-\mathcal{L}_{\text{terminal}} = \frac{1}{N}\sum_{i=1}^{N}\!\left[w(T, y_{1,i}, y_{2,i};\sigma_i,\rho_i) - \max(K_1 y_{1,i} + K_2 y_{2,i} - C, 0)\right]^2
+\mathcal{L}_{\text{terminal}} = \frac{1}{N}\sum_{i=1}^{N}\left[w(T, y_{1,i}, y_{2,i};\sigma_i,\rho_i) - \max(K_1 y_{1,i} + K_2 y_{2,i} - C, 0)\right]^2
 $$
 
 **Total loss:**
 
 $$
-\mathcal{L} = \lambda_{\text{PDE}}\,\mathcal{L}_{\text{PDE}} + \mathcal{L}_{\text{terminal}}, \qquad \lambda_{\text{PDE}} = 1000.
+\mathcal{L} = \lambda_{\text{PDE}}\mathcal{L}_{\text{PDE}} + \mathcal{L}_{\text{terminal}}, \qquad \lambda_{\text{PDE}} = 1000.(varied over training sessions)
 $$
 
 The high PDE weight ensures the network prioritises satisfying the PDE over fitting the boundary, which is appropriate since hedge ratios — not absolute prices — are the primary output used by the strategy.
@@ -350,13 +328,12 @@ rho_c   = torch.rand(batch, 1) * (0.90 - (-0.90)) - 0.90 # ρ ~ U[-0.90, 0.90]
 
 | Metric | Value |
 |--------|-------|
-| Training epochs | 49 500 |
-| Final PDE loss $\mathcal{L}_{\text{PDE}}$ | **0.000310** |
-| Final terminal loss $\mathcal{L}_{\text{terminal}}$ | 0.208404 |
-| Improvement over initial PDE loss | ≈ 8 000× |
+| Training epochs | >20000|
+| Final PDE loss $\mathcal{L}_{\text{PDE}}$ | **0.018344** |
+| Final terminal loss $\mathcal{L}_{\text{terminal}}$ | 0.191695 |
 | Optimiser | Adam, lr = 1e-3 with step decay |
 
-The near-zero PDE loss confirms the network has learned a function that satisfies the coupled nonlinear PDE across the full $(\sigma, \rho)$ domain. The terminal loss reflects the inherent tension between PDE satisfaction (driven by the 1000× weight) and boundary accuracy; reducing the PDE weight to 10–50 in a continuation run would allow the terminal loss to close further while preserving PDE accuracy.
+The low PDE loss confirms the network has learned a function that satisfies the coupled nonlinear PDE across the full $(\sigma, \rho)$ domain. The terminal loss reflects the inherent tension between PDE satisfaction (driven by the 1000× weight) and boundary accuracy; reducing the PDE weight to 10–50 in a continuation run would allow the terminal loss to close further while preserving PDE accuracy.
 
 ---
 
@@ -373,10 +350,10 @@ Two independent simulation frameworks are used to evaluate the strategy across d
 Each stock follows independent Geometric Brownian Motion:
 
 $$
-dS_i = \mu_i S_i\,dt + \sigma_i S_i\,dW_i, \qquad i = 1, 2,
+dS_i = \mu_i S_idt + \sigma_i S_idW_i, \qquad i = 1, 2,
 $$
 
-with analytical solution $S_i(t) = S_i(0)\exp\!\bigl((\mu_i - \frac{1}{2}\sigma_i^2)t + \sigma_i W_i(t)\bigr)$.
+with analytical solution $S_i(t) = S_i(0)\exp\bigl((\mu_i - \frac{1}{2}\sigma_i^2)t + \sigma_i W_i(t)\bigr)$.
 
 | Parameter | Stock 1 | Stock 2 |
 |-----------|---------|---------|
@@ -394,21 +371,17 @@ GBM is the natural domain of Black–Scholes, so this is the **stricter fairness
 A correlated two-asset SDE whose cross-covariance structure matches the PINN's PDE derivation exactly:
 
 $$
-dS_1 = \mu_1 S_1\,dt
-+ \frac{\sigma S_1^2}{\sqrt{S_1^2 + S_2^2}}\,dW_1
-+ \frac{\rho\sigma S_1 S_2}{\sqrt{S_1^2 + S_2^2}}\,dW_2
+dS_1 = \mu_1 S_1dt + \frac{\sigma S_1^2}{\sqrt{S_1^2 + S_2^2}}dW_1 + \frac{\rho\sigma S_1 S_2}{\sqrt{S_1^2 + S_2^2}}dW_2
 $$
 
 $$
-dS_2 = \mu_2 S_2\,dt
-+ \frac{\sigma S_2^2}{\sqrt{S_1^2 + S_2^2}}\,dW_2
-+ \frac{\rho\sigma S_1 S_2}{\sqrt{S_1^2 + S_2^2}}\,dW_1
+dS_2 = \mu_2 S_2dt + \frac{\sigma S_2^2}{\sqrt{S_1^2 + S_2^2}}dW_2 + \frac{\rho\sigma S_1 S_2}{\sqrt{S_1^2 + S_2^2}}dW_1
 $$
 
 where $W_1$ and $W_2$ are independent standard Brownian motions and $\rho = 0.3$ (fixed). The key property is
 
 $$
-\operatorname{Cov}(dS_1, dS_2) = \rho\sigma^2 S_1 S_2\,dt,
+Cov(dS_1, dS_2) = \rho\sigma^2 S_1 S_2dt,
 $$
 
 which coincides exactly with the cross-covariance structure derived in Section 5. The individual variances are $\sigma^2 S_i^2(S_i^2 + \rho^2 S_j^2)/(S_i^2 + S_j^2)\,dt$, which differ from pure GBM — so Black–Scholes is **misspecified** for this dynamics while the PINN model is correctly specified by construction.
@@ -422,7 +395,7 @@ At time $t=0$, both strategies observe the current stock prices $(y_1, y_2)$, co
 Monte Carlo fair value (computed from 1 000 simulated paths):
 
 $$
-P_i^{\text{MC}} = e^{-rT}\,\mathbb{E}\!\left[\max(S_i(T) - K_i,\, 0)\right].
+P_i^{\text{MC}} = e^{-rT}\mathbb{E}\left[\max(S_i(T) - K_i, 0)\right].
 $$
 
 ### 13.1 PINN-Based Hedge
@@ -430,7 +403,7 @@ $$
 **Step 1 — Price and hedge matrix.** Query the trained PINN at the current state to obtain option prices and the hedge matrix:
 
 $$
-(p_1, p_2) = \bigl(w(T, y_1, y_2;\,\sigma,\rho),\; w(T, y_2, y_1;\,\sigma,\rho)\bigr),
+(p_1, p_2) = \bigl(w(T, y_1, y_2,\sigma,\rho),\; w(T, y_2, y_1,\sigma,\rho)\bigr),
 $$
 
 $$
@@ -445,7 +418,7 @@ $$
 **Step 2 — Hedge ratios.** Project the Jacobian inverse onto the portfolio weight vector:
 
 $$
-\alpha = K^T A, \qquad K = [K_1,\; K_2]^T.
+\alpha = K^T A, \qquad K = [K_1, K_2]^T.
 $$
 
 This produces a scalar hedge ratio $\alpha_i$ for each asset jointly, coupling the two positions through the off-diagonal terms of $A$.
@@ -453,21 +426,24 @@ This produces a scalar hedge ratio $\alpha_i$ for each asset jointly, coupling t
 **Step 3 — Position and payoff.** For each asset $i \in \{1, 2\}$:
 
 - **If $P_i^{\text{MC}} > p_i$** (market option premium exceeds PINN price — option appears cheap):
+(Payoff here refers to expected payoff over the several paths generated using given means and volatility)
+
 
 $$
 \text{Capital}_i = \alpha_i(y_i - P_i^{\text{MC}}) + K_i y_i
 $$
+
 $$
-\text{Payoff}_i = (\alpha_i + K_i)\,\mathbb{E}[S_i(T)] - \alpha_i\,\mathbb{E}[\max(S_i(T),\, K_i)]
+\text{Payoff}_i = (\alpha_i + K_i)\mathbb{E}[S_i(T)] - \alpha_i\mathbb{E}[\max(S_i(T), K_i)]
 $$
 
 - **If $p_i \geq P_i^{\text{MC}}$** (PINN price exceeds market premium — option appears expensive):
 
 $$
-\text{Capital}_i = \alpha_i\,P_i^{\text{MC}} + K_i y_i
+\text{Capital}_i = \alpha_iP_i^{\text{MC}} + K_i y_i
 $$
 $$
-\text{Payoff}_i = K_i(y_i - \mathbb{E}[S_i(T)]) + K_i y_i + \alpha_i\,\mathbb{E}[\max(S_i(T) - K_i,\, 0)]
+\text{Payoff}_i = K_i(y_i - \mathbb{E}[S_i(T)]) + K_i y_i + \alpha_i\mathbb{E}[\max(S_i(T) - K_i, 0)]
 $$
 
 **Step 4 — Total return.**
@@ -513,17 +489,21 @@ $$
 
 ## 14. Empirical Results
 
-Both strategies are evaluated over $N = 10\,000$ independent Monte Carlo trials. Each trial samples fresh $(\mu_1, \mu_2, \sigma)$ values and simulates 1 000 price paths.
+Both strategies are evaluated over $N = 10000$ independent Monte Carlo trials. Each trial samples fresh $(\mu_1, \mu_2, \sigma)$ values and simulates 1 000 price paths.
+
+Win rate is probability with which percentage returns of a strategy are greater than other by atleast 3%
+
+Sigmoid mean of strategy A versus B=E(sigmoid(A-B)) ,so it effectively gives an indication of not only how many times the strategy is winning,but by how large of a margin it is winning,many number of smal wins are effectively reduced in calculation.
 
 ### Summary Table
 
 | Metric | PINN Strategy | B-S Benchmark | Improvement |
 |--------|:---:|:---:|:---:|
 | **GBM — Sharpe ratio** | **0.859** | 0.458 | **1.88×** |
-| GBM — Win rate (gap $>3\%$) | 56.5% | — | — |
-| GBM — Sigmoid mean | 0.647 | — | — |
+| GBM — Win rate (gap $>3\%$) | 56.5% | 43.5%| --- |
+| GBM — Sigmoid mean | 0.647 |  | — |
 | **Custom SDE — Sharpe ratio** | **0.860** | 0.468 | **1.84×** |
-| Custom SDE — Win rate (gap $>3\%$) | 56.8% | — | — |
+| Custom SDE — Win rate (gap $>3\%$) | 56.8% | 43.2% | — |
 | Custom SDE — Sigmoid mean | 0.649 | — | — |
 
 *Sharpe ratio here is pseudo-Sharpe (mean/std without risk-free rate subtraction), used consistently for relative comparison.*
